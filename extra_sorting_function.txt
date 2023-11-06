@@ -1,0 +1,35 @@
+//void jobSort2(std::vector<Job>& jobs, int left, int right) {
+//    if (left >= right) 
+//    {
+//        return;
+//    }
+//
+//    int low = left;
+//    int high = right;
+//    Job temp = jobs[(left + right) / 2];
+//
+//    while (low <= high) 
+//    {
+//        while (jobs[low].arrivalTime < temp.arrivalTime ||
+//            (jobs[low].arrivalTime == temp.arrivalTime && jobs[low].type > temp.type)) 
+//        {
+//            low++;
+//        }
+//
+//        while (jobs[high].arrivalTime > temp.arrivalTime ||
+//            (jobs[high].arrivalTime == temp.arrivalTime && jobs[high].type < temp.type)) 
+//        {
+//            high--;
+//        }
+//
+//        if (low <= high) 
+//        {
+//            std::swap(jobs[low], jobs[high]);
+//            low++;
+//            high--;
+//        }
+//    }
+//
+//    jobSort(jobs, left, high);
+//    jobSort(jobs, low, right);
+//}

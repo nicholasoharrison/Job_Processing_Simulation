@@ -38,7 +38,6 @@ void jobSort(std::vector<Job>& jobs)
 int main() 
 {
 
-    std::cout << "Test";
 
     std::vector<Job> jobs;
     std::default_random_engine generator;

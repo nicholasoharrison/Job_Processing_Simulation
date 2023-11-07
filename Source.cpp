@@ -3,16 +3,14 @@
 #include <vector>
 #include <algorithm>
 #include <random>
+#include <queue>
+#include "Processors.h"
 
 
 
-struct Job 
-{
-    char type;
-    int jobNumber;
-    int arrivalTime;
-    int processingTime;
-};
+
+
+
 
 
 void jobSort(std::vector<Job>& jobs)
@@ -95,7 +93,6 @@ int main()
     }
 
 
-
     // Sort jobs
     jobSort(jobs);
 
@@ -116,6 +113,51 @@ int main()
     {
         std::cout << "Unable to open file\n";
     }
+
+    std::vector<Job*> waitQueue;
+    std::vector<Job> * temp = &jobs;
+
+    int processorNum;
+    std::cout << "\nEnter a number of processors: ";
+    std::cin >> processorNum;
+
+    
+
+    Processors pro(processorNum);
+
+    for (int i = 0; i < 500; i++)
+    {
+        std::cout << "\nTime " << i << ": ";
+        if (jobs[i].arrivalTime == i)
+        {
+            if (pro.getOpenProcessor() > -1 && waitQueue.size() != 0)
+            {
+                //should put the top of the queue in one of the open proessors
+            }
+            if (pro.getOpenProcessor() > -1 && waitQueue.size() == 0)
+            {
+                pro.processors[pro.getOpenProcessor()] = &jobs[i];
+            }
+            else
+            {
+                if (jobs[i].type == 'D' && pro.allTypeD() != true)
+                {
+                    waitQueue.push_back(pro.processors[pro.getLeastTimeProcessor()]);
+                    pro.processors[pro.getLeastTimeProcessor()] = &jobs[i];
+                }
+                else
+                {
+                    waitQueue.push_back(&jobs[i]);
+                }
+            }
+        }
+    }
+
+    
+   
+
+
+   
 
 
 

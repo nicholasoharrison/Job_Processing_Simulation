@@ -41,7 +41,7 @@ int Processors::getLeastTimeProcessor()
 
 bool Processors::allTypeD()
 {
-    for (int i = 1; i < numProcessors; i++)
+    for (int i = 0; i < numProcessors; i++)
     {
         if (processors[i]->type != 'D')
         {

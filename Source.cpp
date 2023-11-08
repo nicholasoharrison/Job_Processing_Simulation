@@ -121,33 +121,59 @@ int main()
     std::cout << "\nEnter a number of processors: ";
     std::cin >> processorNum;
 
-    
+    //                       NOTE
+    // I have the processors partly working. I need to implement the functionality of time taking away from the 
+    // processing time of the jobs in the processors. I know how to do that but I just need a little more time.
+    // The test plan I think should be started. I will leave more comments about the fuunctionality of the code
+    // when i get a chance.
+    // 
+    // I am having an issue with possibly a memory leak so I placed a break point before the end of main to allow it to run
+    // If you could figure that out it would be great
+    //
 
     Processors pro(processorNum);
-
-    for (int i = 0; i < 500; i++)
+    for (int j = 0; j < jobs[499].arrivalTime; j++)
     {
-        std::cout << "\nTime " << i << ": ";
-        if (jobs[i].arrivalTime == i)
-        {
-            if (pro.getOpenProcessor() > -1 && waitQueue.size() != 0)
+        std::cout << "\nTime " << j << ":";
+        for (int i = 0; i < 500; i++)
+        {     
+            if (jobs[i].arrivalTime == j)
             {
-                //should put the top of the queue in one of the open proessors
-            }
-            if (pro.getOpenProcessor() > -1 && waitQueue.size() == 0)
-            {
-                pro.processors[pro.getOpenProcessor()] = &jobs[i];
-            }
-            else
-            {
-                if (jobs[i].type == 'D' && pro.allTypeD() != true)
+                if (pro.getOpenProcessor() > -1 && waitQueue.size() != 0 && jobs[i].type != 'D')
                 {
-                    waitQueue.push_back(pro.processors[pro.getLeastTimeProcessor()]);
-                    pro.processors[pro.getLeastTimeProcessor()] = &jobs[i];
+                    pro.processors[pro.getOpenProcessor()] = waitQueue[0];
+                    std::cout <<"\n   " << waitQueue[0]->type << ":" << waitQueue[0]->jobNumber << " processing... ";
+                    for (int i = 0; i < waitQueue.size(); i++)
+                    {
+                        if (waitQueue[i + 1] == NULL)
+                        {
+                            waitQueue[i] = NULL;
+                        }
+                        else
+                        {
+                            waitQueue[i] = waitQueue[i + 1];
+                        }
+                    }
+                }
+                if (pro.getOpenProcessor() > -1 && waitQueue.size() == 0)
+                {
+                    pro.processors[pro.getOpenProcessor()] = &jobs[i];
+                    std::cout << "\n   " << jobs[i].type << ":" << jobs[i].jobNumber << " processing... ";;
                 }
                 else
                 {
-                    waitQueue.push_back(&jobs[i]);
+                    if (jobs[i].type == 'D' && pro.allTypeD() != true)
+                    {
+                        waitQueue.push_back(pro.processors[pro.getLeastTimeProcessor()]);
+                        std::cout << "\n   "  << pro.processors[pro.getLeastTimeProcessor()]->type << ":" << pro.processors[pro.getLeastTimeProcessor()]->jobNumber << " placed in queue...";
+                        pro.processors[pro.getLeastTimeProcessor()] = &jobs[i];
+                        std::cout << "\n   " << jobs[i].type << ":" << jobs[i].jobNumber << " processing... ";
+                    }
+                    else
+                    {
+                        waitQueue.push_back(&jobs[i]);
+                        std::cout << "\n   " << jobs[i].type << ":" << jobs[i].jobNumber << " placed in queue...";
+                    }
                 }
             }
         }

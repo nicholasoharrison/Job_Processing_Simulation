@@ -5,10 +5,12 @@ Processors::Processors(int num)
 {
     processors[num];
     numProcessors = num;
+
     for (int i = 0; i < num; i++)
     {
         processors[i] = nullptr;
     }
+    
 }
 
 

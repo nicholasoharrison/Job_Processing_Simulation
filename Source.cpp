@@ -121,6 +121,8 @@ int main()
     std::cout << "\nEnter a number of processors: ";
     std::cin >> processorNum;
 
+    int qFront = 0;
+
     //                       NOTE
     // I have the processors partly working. I need to implement the functionality of time taking away from the 
     // processing time of the jobs in the processors. I know how to do that but I just need a little more time.
@@ -132,24 +134,15 @@ int main()
     //
 
     Processors pro(processorNum);
+
     for (int j = 0; j < jobs[499].arrivalTime; j++)
     {
         std::cout << "\nTime " << j << ":";
         if (pro.getOpenProcessor() > -1 && waitQueue.size() != 0)
         {
-            pro.processors[pro.getOpenProcessor()] = waitQueue[0];
-            std::cout << "\n   " << waitQueue[0]->type << ":" << waitQueue[0]->jobNumber << " processing... ";
-            for (int i = 0; i < waitQueue.size(); i++)
-            {
-                if (waitQueue[i + 1] == NULL)
-                {
-                    waitQueue[i] = NULL;
-                }
-                else
-                {
-                    waitQueue[i] = waitQueue[i + 1];
-                }
-            }
+            pro.processors[pro.getOpenProcessor()] = waitQueue[qFront];
+            std::cout << "\n   " << waitQueue[qFront]->type << ":" << waitQueue[0]->jobNumber << " processing... ";
+            qFront++;
         }
         for (int i = 0; i < 500; i++)
         {     
@@ -159,7 +152,7 @@ int main()
                 if (pro.getOpenProcessor() > -1 && waitQueue.size() == 0)
                 {
                     pro.processors[pro.getOpenProcessor()] = &jobs[i];
-                    std::cout << "\n   " << jobs[i].type << ":" << jobs[i].jobNumber << " processing... ";;
+                    std::cout << "\n   " << jobs[i].type << ":" << jobs[i].jobNumber << " processing... ";
                 }
                 else
                 {

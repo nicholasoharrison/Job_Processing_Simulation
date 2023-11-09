@@ -28,6 +28,8 @@ public:
 
     bool allTypeD();
 
+    int getNumProcessors() { return numProcessors; }
+
 
 
 };

@@ -135,26 +135,27 @@ int main()
     for (int j = 0; j < jobs[499].arrivalTime; j++)
     {
         std::cout << "\nTime " << j << ":";
+        if (pro.getOpenProcessor() > -1 && waitQueue.size() != 0)
+        {
+            pro.processors[pro.getOpenProcessor()] = waitQueue[0];
+            std::cout << "\n   " << waitQueue[0]->type << ":" << waitQueue[0]->jobNumber << " processing... ";
+            for (int i = 0; i < waitQueue.size(); i++)
+            {
+                if (waitQueue[i + 1] == NULL)
+                {
+                    waitQueue[i] = NULL;
+                }
+                else
+                {
+                    waitQueue[i] = waitQueue[i + 1];
+                }
+            }
+        }
         for (int i = 0; i < 500; i++)
         {     
             if (jobs[i].arrivalTime == j)
             {
-                if (pro.getOpenProcessor() > -1 && waitQueue.size() != 0 && jobs[i].type != 'D')
-                {
-                    pro.processors[pro.getOpenProcessor()] = waitQueue[0];
-                    std::cout <<"\n   " << waitQueue[0]->type << ":" << waitQueue[0]->jobNumber << " processing... ";
-                    for (int i = 0; i < waitQueue.size(); i++)
-                    {
-                        if (waitQueue[i + 1] == NULL)
-                        {
-                            waitQueue[i] = NULL;
-                        }
-                        else
-                        {
-                            waitQueue[i] = waitQueue[i + 1];
-                        }
-                    }
-                }
+                
                 if (pro.getOpenProcessor() > -1 && waitQueue.size() == 0)
                 {
                     pro.processors[pro.getOpenProcessor()] = &jobs[i];
@@ -175,8 +176,13 @@ int main()
                         std::cout << "\n   " << jobs[i].type << ":" << jobs[i].jobNumber << " placed in queue...";
                     }
                 }
+
+
             }
         }
+
+        //Decrement processing time of those in the processor.
+
     }
 
     

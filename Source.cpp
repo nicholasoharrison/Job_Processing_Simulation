@@ -115,6 +115,7 @@ int main()
     }
 
     std::vector<Job*> waitQueue;
+    std::vector<Job*> dQueue;
     std::vector<Job> * temp = &jobs;
 
     int processorNum;
@@ -122,6 +123,7 @@ int main()
     std::cin >> processorNum;
 
     int qFront = 0;
+    int dqFront = 0;
 
     //                       NOTE
     // I have the processors partly working. I need to implement the functionality of time taking away from the 
@@ -138,18 +140,27 @@ int main()
     for (int j = 0; j < jobs[499].arrivalTime; j++)
     {
         std::cout << "\nTime " << j << ":";
-        if (pro.getOpenProcessor() > -1 && waitQueue.size() != 0)
+        if (pro.getOpenProcessor() > -1 && (waitQueue.size() != 0 || dQueue.size() != 0))
         {
-            pro.processors[pro.getOpenProcessor()] = waitQueue[qFront];
-            std::cout << "\n   " << waitQueue[qFront]->type << ":" << waitQueue[0]->jobNumber << " processing... ";
-            qFront++;
+            if (dQueue.size() == 0)
+            {
+                pro.processors[pro.getOpenProcessor()] = waitQueue[qFront];
+                std::cout << "\n   " << waitQueue[qFront]->type << ":" << waitQueue[qFront]->jobNumber << " processing... ";
+                qFront++;
+            }
+            else
+            {
+                pro.processors[pro.getOpenProcessor()] = dQueue[dqFront];
+                std::cout << "\n   " << dQueue[dqFront]->type << ":" << dQueue[dqFront]->jobNumber << " processing... ";
+                dqFront++;
+            }
         }
         for (int i = 0; i < 500; i++)
         {     
             if (jobs[i].arrivalTime == j)
             {
                 
-                if (pro.getOpenProcessor() > -1 && waitQueue.size() == 0)
+                if (pro.getOpenProcessor() > -1 && waitQueue.size() == 0 && dQueue.size() == 0)
                 {
                     pro.processors[pro.getOpenProcessor()] = &jobs[i];
                     std::cout << "\n   " << jobs[i].type << ":" << jobs[i].jobNumber << " processing... ";
@@ -165,7 +176,7 @@ int main()
                     }
                     else
                     {
-                        waitQueue.push_back(&jobs[i]);
+                        dQueue.push_back(&jobs[i]);
                         std::cout << "\n   " << jobs[i].type << ":" << jobs[i].jobNumber << " placed in queue...";
                     }
                 }
@@ -174,7 +185,20 @@ int main()
             }
         }
 
-        //Decrement processing time of those in the processor.
+        for (int i = 0; i < processorNum; i++)
+        {
+            if (pro.processors[i]->jobNumber > -1) // problem here when there is more than 3 processors - not sure why yet
+            {
+                (pro.processors[i]->processingTime)--;
+                if (pro.processors[i]->processingTime == 0)
+                {
+                    std::cout << "\n   " << pro.processors[i]->type << ":" << pro.processors[i]->jobNumber << " DONE PROCESSING~~~";
+                    pro.processors[i] = pro.getTemp();
+
+                }
+            }
+        }
+        
 
     }
 

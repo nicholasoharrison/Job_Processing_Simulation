@@ -9,16 +9,18 @@ struct Job
 };
 
 
+
 class Processors
 {
 
 private:
     int numProcessors;
+    Job* temp;
 
 public:
 	Job* processors[];
 
-    ~Processors() { delete processors; *processors = nullptr; }
+    ~Processors() { delete processors; *processors = nullptr; delete temp; temp = nullptr; } 
 
     Processors(int num);
 
@@ -29,6 +31,8 @@ public:
     bool allTypeD();
 
     int getNumProcessors() { return numProcessors; }
+
+    Job* getTemp();
 
 
 

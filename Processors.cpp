@@ -1,14 +1,16 @@
 #include "Processors.h"
 
 
+
 Processors::Processors(int num)
 {
     processors[num];
     numProcessors = num;
-
+    temp = new Job;
+    temp->jobNumber = -1;
     for (int i = 0; i < num; i++)
     {
-        processors[i] = nullptr;
+        processors[i] = temp;  
     }
     
 }
@@ -16,9 +18,11 @@ Processors::Processors(int num)
 
 int Processors::getOpenProcessor()
 {
+    
+    
     for (int i = 0; i < numProcessors; i++)
     {
-        if (processors[i] == nullptr)
+        if (processors[i]->jobNumber == -1) 
         {
             return i;
         }
@@ -32,7 +36,7 @@ int Processors::getLeastTimeProcessor()
     int least = 0;
     for (int i = 1; i < numProcessors; i++)
     {
-        if (processors[i]->processingTime < processors[least]->processingTime)
+        if ((processors[i]->processingTime < processors[least]->processingTime) && processors[i]->type != 'D')
         {
             least = i;
         }
@@ -52,4 +56,11 @@ bool Processors::allTypeD()
     }
 
     return true;
+}
+
+
+
+Job* Processors::getTemp()
+{
+    return temp;
 }

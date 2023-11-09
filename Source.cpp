@@ -125,23 +125,35 @@ int main()
     int qFront = 0;
     int dqFront = 0;
 
-    //                       NOTE
-    // I have the processors partly working. I need to implement the functionality of time taking away from the 
-    // processing time of the jobs in the processors. I know how to do that but I just need a little more time.
-    // The test plan I think should be started. I will leave more comments about the fuunctionality of the code
-    // when i get a chance.
-    // 
-    // I am having an issue with possibly a memory leak so I placed a break point before the end of main to allow it to run
-    // If you could figure that out it would be great
-    //
+    int avgQueueSize = 0;
+    int qFullTime = 0;
 
-    Processors pro(processorNum);
+    int cpuFullTime = 0;
+    int time = 0;
+
+    int aCompleted = 0;
+    int bCompleted = 0;
+    int cCompleted = 0;
+    int dCompleted = 0;
+    int totalCompleted = 0;
+
+    int aArrived = 0;
+    int bArrived = 0;
+    int cArrived = 0;
+    int dArrived = 0;
+
+    
+
+    Processors pro(processorNum); // weird error with processorNum = 2
 
     for (int j = 0; j < 500; j++)
     {
         std::cout << "\nTime " << j << ":";
+        if (!pro.isEmpty()) { cpuFullTime++; }
+        time++;
         if (pro.getOpenProcessor() > -1 && (waitQueue.size() != 0 || dQueue.size() != 0))
         {
+            
             if (dQueue.size() == 0)
             {
                 pro.processors[pro.getOpenProcessor()] = waitQueue[qFront];
@@ -159,6 +171,10 @@ int main()
         {     
             if (jobs[i].arrivalTime == j)
             {
+                if (jobs[i].type == 'A') { aArrived++; }
+                if (jobs[i].type == 'B') { bArrived++; }
+                if (jobs[i].type == 'C') { cArrived++; }
+                if (jobs[i].type == 'D') { dArrived++; }
                 
                 if (pro.getOpenProcessor() > -1 && waitQueue.size() == 0 && dQueue.size() == 0)
                 {
@@ -167,6 +183,7 @@ int main()
                 }
                 else
                 {
+                    
                     if (jobs[i].type == 'D' && pro.allTypeD() != true)
                     {
                         waitQueue.push_back(pro.processors[pro.getLeastTimeProcessor()]);
@@ -176,7 +193,15 @@ int main()
                     }
                     else
                     {
-                        dQueue.push_back(&jobs[i]);
+                        if(jobs[i].type == 'D')
+                        {
+                            dQueue.push_back(&jobs[i]);
+                        }
+                        else
+                        {
+                            waitQueue.push_back(&jobs[i]);
+                        }
+                        
                         std::cout << "\n   " << jobs[i].type << ":" << jobs[i].jobNumber << " placed in queue...";
                     }
                 }
@@ -193,18 +218,53 @@ int main()
                 (pro.processors[i]->processingTime)--;
                 if (pro.processors[i]->processingTime == 0)
                 {
+                   
+                    if (pro.processors[i]->type == 'A') { aCompleted++; }
+                    if (pro.processors[i]->type == 'B') { bCompleted++; }
+                    if (pro.processors[i]->type == 'C') { cCompleted++; }
+                    if (pro.processors[i]->type == 'D') { dCompleted++; }
+
+                    totalCompleted++;
+                    
                     std::cout << "\n   " << pro.processors[i]->type << ":" << pro.processors[i]->jobNumber << " DONE PROCESSING~~~";
                     pro.processors[i] = pro.getTemp();
 
+               
                 }
             }
         }
+
+        avgQueueSize = avgQueueSize + (waitQueue.size() + dQueue.size() - qFront - dqFront);
+
+        if (dQueue.size() + waitQueue.size() != 0)
+        {
+            qFullTime++;
+        }
+        
         
 
     }
 
+    avgQueueSize /= 500.00;
+
     
-   
+    std::cout << "\n\n\n\nNumber of processors: " << processorNum;
+    std::cout << "\nCurrent queue size: " << waitQueue.size() + dQueue.size() - qFront - dqFront;
+    std::cout << "\nAverage queue size: " << avgQueueSize;
+    std::cout << "\nMax queue size: " << waitQueue.size() + dQueue.size();
+    std::cout << "\nTotal time jobs are in queue: " << qFullTime;
+    std::cout << "\nAverage time jobs are in queue: "; // not sure how to implement this yet
+    std::cout << "\nTotal number of A jobs arrived: " << aArrived;
+    std::cout << "\nTotal number of A jobs completed: " << aCompleted;
+    std::cout << "\nTotal number of B jobs arrived: " << bArrived;
+    std::cout << "\nTotal number of B jobs completed: " << bCompleted;
+    std::cout << "\nTotal number of C jobs arrived: " << cArrived;
+    std::cout << "\nTotal number of C jobs completed: " << cCompleted;
+    std::cout << "\nTotal number of D jobs arrived: " << dArrived;
+    std::cout << "\nTotal number of D jobs completed: " << dCompleted;
+    std::cout << "\nTotal jobs completed: " << totalCompleted;
+    std::cout << "\nTotal time CPU(s) were processing: " << cpuFullTime;
+    std::cout << "\nTotal time CPU(s) were idle: " << time - cpuFullTime;
 
 
    

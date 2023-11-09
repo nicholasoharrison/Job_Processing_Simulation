@@ -64,3 +64,17 @@ Job* Processors::getTemp()
 {
     return temp;
 }
+
+
+bool Processors::isEmpty()
+{
+    for (int i = 0; i < numProcessors; i++)
+    {
+        if (processors[i]->jobNumber > 0) // error with any number of processors over 3
+        {
+            return false;
+        }
+    }
+
+    return true;
+}

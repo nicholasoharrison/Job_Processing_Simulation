@@ -34,6 +34,8 @@ public:
 
     Job* getTemp();
 
+    bool isEmpty();
+
 
 
 };

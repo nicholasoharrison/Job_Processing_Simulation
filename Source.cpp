@@ -137,7 +137,7 @@ int main()
 
     Processors pro(processorNum);
 
-    for (int j = 0; j < jobs[499].arrivalTime; j++)
+    for (int j = 0; j < 500; j++)
     {
         std::cout << "\nTime " << j << ":";
         if (pro.getOpenProcessor() > -1 && (waitQueue.size() != 0 || dQueue.size() != 0))
@@ -187,6 +187,7 @@ int main()
 
         for (int i = 0; i < processorNum; i++)
         {
+            
             if (pro.processors[i]->jobNumber > -1) // problem here when there is more than 3 processors - not sure why yet
             {
                 (pro.processors[i]->processingTime)--;

@@ -18,7 +18,7 @@ private:
     Job* temp;
 
 public:
-	Job* processors[];
+	Job* processors[100];
 
     ~Processors() { delete processors; *processors = nullptr; delete temp; temp = nullptr; } 
 

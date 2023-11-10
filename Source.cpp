@@ -144,7 +144,7 @@ int main()
 
     
 
-    Processors pro(processorNum); // weird error with processorNum = 2
+    Processors pro(processorNum); // weird error with processorNum = 2, 4, 5
 
     for (int j = 0; j < 500; j++)
     {
@@ -213,7 +213,7 @@ int main()
         for (int i = 0; i < processorNum; i++)
         {
             
-            if (pro.processors[i]->jobNumber > -1) // problem here when there is more than 3 processors - not sure why yet
+            if (pro.processors[i]->jobNumber > -1) 
             {
                 (pro.processors[i]->processingTime)--;
                 if (pro.processors[i]->processingTime == 0)
@@ -223,6 +223,8 @@ int main()
                     if (pro.processors[i]->type == 'B') { bCompleted++; }
                     if (pro.processors[i]->type == 'C') { cCompleted++; }
                     if (pro.processors[i]->type == 'D') { dCompleted++; }
+
+                    
 
                     totalCompleted++;
                     

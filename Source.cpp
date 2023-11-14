@@ -118,6 +118,8 @@ int main()
     std::vector<Job*> dQueue;
     std::vector<Job> * temp = &jobs;
 
+
+
     int processorNum;
     std::cout << "\nEnter a number of processors: ";
     std::cin >> processorNum;
@@ -167,7 +169,7 @@ int main()
                 dqFront++;
             }
         }
-        for (int i = 0; i < 500; i++)
+        for (int i = 0; i < 6350; i++)
         {     
             if (jobs[i].arrivalTime == j)
             {
@@ -250,7 +252,7 @@ int main()
     avgQueueSize /= 500.00;
 
     
-    std::cout << "\n\n\n\nNumber of processors: " << processorNum;
+    std::cout << "\n\n\n\n\nNumber of processors: " << processorNum;
     std::cout << "\nCurrent queue size: " << waitQueue.size() + dQueue.size() - qFront - dqFront;
     std::cout << "\nAverage queue size: " << avgQueueSize;
     std::cout << "\nMax queue size: " << waitQueue.size() + dQueue.size();
@@ -268,9 +270,134 @@ int main()
     std::cout << "\nTotal time CPU(s) were processing: " << cpuFullTime;
     std::cout << "\nTotal time CPU(s) were idle: " << time - cpuFullTime;
 
+    std::cout << "\n\n\n\n\n";
+
 
    
 
+    for (int j = 500; j < 9500; j++)
+    {
+        std::cout << "\nTime " << j << ":";
+        if (!pro.isEmpty()) { cpuFullTime++; }
+        time++;
+        if (pro.getOpenProcessor() > -1 && (waitQueue.size() != 0 || dQueue.size() != 0))
+        {
+
+            if (dQueue.size() == 0)
+            {
+                pro.processors[pro.getOpenProcessor()] = waitQueue[qFront];
+                std::cout << "\n   " << waitQueue[qFront]->type << ":" << waitQueue[qFront]->jobNumber << " processing... ";
+                qFront++;
+            }
+            else
+            {
+                pro.processors[pro.getOpenProcessor()] = dQueue[dqFront];
+                std::cout << "\n   " << dQueue[dqFront]->type << ":" << dQueue[dqFront]->jobNumber << " processing... ";
+                dqFront++;
+            }
+        }
+        for (int i = 0; i < 6350; i++)
+        {
+            if (jobs[i].arrivalTime == j)
+            {
+                if (jobs[i].type == 'A') { aArrived++; }
+                if (jobs[i].type == 'B') { bArrived++; }
+                if (jobs[i].type == 'C') { cArrived++; }
+                if (jobs[i].type == 'D') { dArrived++; }
+
+                if (pro.getOpenProcessor() > -1 && waitQueue.size() == 0 && dQueue.size() == 0)
+                {
+                    pro.processors[pro.getOpenProcessor()] = &jobs[i];
+                    std::cout << "\n   " << jobs[i].type << ":" << jobs[i].jobNumber << " processing... ";
+                }
+                else
+                {
+
+                    if (jobs[i].type == 'D' && pro.allTypeD() != true)
+                    {
+                        waitQueue.push_back(pro.processors[pro.getLeastTimeProcessor()]);
+                        std::cout << "\n   " << pro.processors[pro.getLeastTimeProcessor()]->type << ":" << pro.processors[pro.getLeastTimeProcessor()]->jobNumber << " placed in queue...";
+                        pro.processors[pro.getLeastTimeProcessor()] = &jobs[i];
+                        std::cout << "\n   " << jobs[i].type << ":" << jobs[i].jobNumber << " processing... ";
+                    }
+                    else
+                    {
+                        if (jobs[i].type == 'D')
+                        {
+                            dQueue.push_back(&jobs[i]);
+                        }
+                        else
+                        {
+                            waitQueue.push_back(&jobs[i]);
+                        }
+
+                        std::cout << "\n   " << jobs[i].type << ":" << jobs[i].jobNumber << " placed in queue...";
+                    }
+                }
+
+
+            }
+        }
+
+        for (int i = 0; i < processorNum; i++)
+        {
+
+            if (pro.processors[i]->jobNumber > -1)
+            {
+                (pro.processors[i]->processingTime)--;
+                if (pro.processors[i]->processingTime == 0)
+                {
+
+                    if (pro.processors[i]->type == 'A') { aCompleted++; }
+                    if (pro.processors[i]->type == 'B') { bCompleted++; }
+                    if (pro.processors[i]->type == 'C') { cCompleted++; }
+                    if (pro.processors[i]->type == 'D') { dCompleted++; }
+
+
+
+                    totalCompleted++;
+
+                    std::cout << "\n   " << pro.processors[i]->type << ":" << pro.processors[i]->jobNumber << " DONE PROCESSING~~~";
+                    pro.processors[i] = pro.getTemp();
+
+
+                }
+            }
+        }
+
+        avgQueueSize = avgQueueSize + (waitQueue.size() + dQueue.size() - qFront - dqFront);
+
+        if (dQueue.size() + waitQueue.size() != 0)
+        {
+            qFullTime++;
+        }
+
+
+
+    }
+
+    avgQueueSize /= 9500.00;
+
+
+    std::cout << "\n\n\n\n\nNumber of processors: " << processorNum;
+    std::cout << "\nCurrent queue size: " << waitQueue.size() + dQueue.size() - qFront - dqFront;
+    std::cout << "\nAverage queue size: " << avgQueueSize;
+    std::cout << "\nMax queue size: " << waitQueue.size() + dQueue.size();
+    std::cout << "\nTotal time jobs are in queue: " << qFullTime;
+    std::cout << "\nAverage time jobs are in queue: "; // not sure how to implement this yet
+    std::cout << "\nTotal number of A jobs arrived: " << aArrived;
+    std::cout << "\nTotal number of A jobs completed: " << aCompleted;
+    std::cout << "\nTotal number of B jobs arrived: " << bArrived;
+    std::cout << "\nTotal number of B jobs completed: " << bCompleted;
+    std::cout << "\nTotal number of C jobs arrived: " << cArrived;
+    std::cout << "\nTotal number of C jobs completed: " << cCompleted;
+    std::cout << "\nTotal number of D jobs arrived: " << dArrived;
+    std::cout << "\nTotal number of D jobs completed: " << dCompleted;
+    std::cout << "\nTotal jobs completed: " << totalCompleted;
+    std::cout << "\nTotal time CPU(s) were processing: " << cpuFullTime;
+    std::cout << "\nTotal time CPU(s) were idle: " << time - cpuFullTime;
+
+    std::cout << "\n\n\n\n\n";
 
 
 

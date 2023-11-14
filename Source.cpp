@@ -174,10 +174,7 @@ int main()
         }
         for (int i = 0; i < 6350; i++) // error occurring somewhere in this code
         {     
-            if (j == 134)
-            {
-                std::cout << "testing";
-            }
+            
             if (jobs[i].arrivalTime == j)
             {
                 if (jobs[i].type == 'A') { aArrived++; }

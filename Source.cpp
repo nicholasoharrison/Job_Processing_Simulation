@@ -144,6 +144,11 @@ int main()
     int cArrived = 0;
     int dArrived = 0;
 
+
+
+    std::ofstream logfile("job_log_file.txt");
+    logfile.clear();
+
     
 
     Processors pro(processorNum); // weird error with processorNum = 2, 4, 5
@@ -154,6 +159,7 @@ int main()
 
         
         std::cout << "\nTime " << j << ":";
+        logfile << "\nTime " << j << ":";
         if (!pro.isEmpty()) { cpuFullTime++; }
         time++;
         if (pro.getOpenProcessor() > -1 && (waitQueue.size() != 0 || dQueue.size() != 0))
@@ -163,12 +169,14 @@ int main()
             {
                 pro.processors[pro.getOpenProcessor()] = waitQueue[qFront];
                 std::cout << "\n   " << waitQueue[qFront]->type << ":" << waitQueue[qFront]->jobNumber << " processing... ";
+                logfile << "\n   " << waitQueue[qFront]->type << ":" << waitQueue[qFront]->jobNumber << " processing... ";
                 qFront++;
             }
             else
             {
                 pro.processors[pro.getOpenProcessor()] = dQueue[dqFront];
                 std::cout << "\n   " << dQueue[dqFront]->type << ":" << dQueue[dqFront]->jobNumber << " processing... ";
+                logfile << "\n   " << dQueue[dqFront]->type << ":" << dQueue[dqFront]->jobNumber << " processing... ";
                 dqFront++;
             }
         }
@@ -186,6 +194,7 @@ int main()
                 {
                     pro.processors[pro.getOpenProcessor()] = &jobs[i];
                     std::cout << "\n   " << jobs[i].type << ":" << jobs[i].jobNumber << " processing... ";
+                    logfile << "\n   " << jobs[i].type << ":" << jobs[i].jobNumber << " processing... ";
                 }
                 else
                 {
@@ -194,8 +203,10 @@ int main()
                     {
                         waitQueue.push_back(pro.processors[pro.getLeastTimeProcessor()]);
                         std::cout << "\n   "  << pro.processors[pro.getLeastTimeProcessor()]->type << ":" << pro.processors[pro.getLeastTimeProcessor()]->jobNumber << " placed in queue...";
+                        logfile << "\n   " << pro.processors[pro.getLeastTimeProcessor()]->type << ":" << pro.processors[pro.getLeastTimeProcessor()]->jobNumber << " placed in queue...";
                         pro.processors[pro.getLeastTimeProcessor()] = &jobs[i];
                         std::cout << "\n   " << jobs[i].type << ":" << jobs[i].jobNumber << " processing... ";
+                        logfile << "\n   " << jobs[i].type << ":" << jobs[i].jobNumber << " processing... ";
                     }
                     else
                     {
@@ -209,6 +220,7 @@ int main()
                         }
                         
                         std::cout << "\n   " << jobs[i].type << ":" << jobs[i].jobNumber << " placed in queue...";
+                        logfile << "\n   " << jobs[i].type << ":" << jobs[i].jobNumber << " placed in queue...";
                     }
                 }
 
@@ -235,6 +247,7 @@ int main()
                     totalCompleted++;
                     
                     std::cout << "\n   " << pro.processors[i]->type << ":" << pro.processors[i]->jobNumber << " DONE PROCESSING~~~";
+                    logfile << "\n   " << pro.processors[i]->type << ":" << pro.processors[i]->jobNumber << " DONE PROCESSING~~~";
                     pro.processors[i] = pro.getTemp();
 
                
@@ -282,6 +295,7 @@ int main()
     for (int j = 500; j < 9500; j++)
     {
         std::cout << "\nTime " << j << ":";
+        logfile << "\nTime " << j << ":";
         if (!pro.isEmpty()) { cpuFullTime++; }
         time++;
         if (pro.getOpenProcessor() > -1 && (waitQueue.size() != 0 || dQueue.size() != 0))
@@ -291,12 +305,14 @@ int main()
             {
                 pro.processors[pro.getOpenProcessor()] = waitQueue[qFront];
                 std::cout << "\n   " << waitQueue[qFront]->type << ":" << waitQueue[qFront]->jobNumber << " processing... ";
+                logfile << "\n   " << waitQueue[qFront]->type << ":" << waitQueue[qFront]->jobNumber << " processing... ";
                 qFront++;
             }
             else
             {
                 pro.processors[pro.getOpenProcessor()] = dQueue[dqFront];
                 std::cout << "\n   " << dQueue[dqFront]->type << ":" << dQueue[dqFront]->jobNumber << " processing... ";
+                logfile << "\n   " << dQueue[dqFront]->type << ":" << dQueue[dqFront]->jobNumber << " processing... ";
                 dqFront++;
             }
         }
@@ -313,6 +329,7 @@ int main()
                 {
                     pro.processors[pro.getOpenProcessor()] = &jobs[i];
                     std::cout << "\n   " << jobs[i].type << ":" << jobs[i].jobNumber << " processing... ";
+                    logfile << "\n   " << jobs[i].type << ":" << jobs[i].jobNumber << " processing... ";
                 }
                 else
                 {
@@ -321,8 +338,10 @@ int main()
                     {
                         waitQueue.push_back(pro.processors[pro.getLeastTimeProcessor()]);
                         std::cout << "\n   " << pro.processors[pro.getLeastTimeProcessor()]->type << ":" << pro.processors[pro.getLeastTimeProcessor()]->jobNumber << " placed in queue...";
+                        logfile << "\n   " << pro.processors[pro.getLeastTimeProcessor()]->type << ":" << pro.processors[pro.getLeastTimeProcessor()]->jobNumber << " placed in queue...";
                         pro.processors[pro.getLeastTimeProcessor()] = &jobs[i];
                         std::cout << "\n   " << jobs[i].type << ":" << jobs[i].jobNumber << " processing... ";
+                        logfile << "\n   " << jobs[i].type << ":" << jobs[i].jobNumber << " processing... ";
                     }
                     else
                     {
@@ -336,6 +355,7 @@ int main()
                         }
 
                         std::cout << "\n   " << jobs[i].type << ":" << jobs[i].jobNumber << " placed in queue...";
+                        logfile << "\n   " << jobs[i].type << ":" << jobs[i].jobNumber << " placed in queue...";
                     }
                 }
 
@@ -362,6 +382,7 @@ int main()
                     totalCompleted++;
 
                     std::cout << "\n   " << pro.processors[i]->type << ":" << pro.processors[i]->jobNumber << " DONE PROCESSING~~~";
+                    logfile << "\n   " << pro.processors[i]->type << ":" << pro.processors[i]->jobNumber << " DONE PROCESSING~~~";
                     pro.processors[i] = pro.getTemp();
 
 
@@ -403,6 +424,8 @@ int main()
 
     std::cout << "\n\n\n\n\n";
 
+
+    logfile.close();
 
 
     return 0;

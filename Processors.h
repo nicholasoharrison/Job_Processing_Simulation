@@ -20,7 +20,7 @@ private:
 public:
 	Job* processors[100];
 
-    ~Processors() { delete processors; *processors = nullptr; delete temp; temp = nullptr; } 
+    ~Processors() { delete temp; temp = nullptr; } 
 
     Processors(int num);
 

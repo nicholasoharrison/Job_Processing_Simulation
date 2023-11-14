@@ -70,7 +70,7 @@ bool Processors::isEmpty()
 {
     for (int i = 0; i < numProcessors; i++)
     {
-        if (processors[i]->jobNumber > 0) // error with any number of processors over 3
+        if (processors[i]->jobNumber > 0) 
         {
             return false;
         }

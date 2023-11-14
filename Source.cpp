@@ -150,6 +150,9 @@ int main()
 
     for (int j = 0; j < 500; j++)
     {
+        
+
+        
         std::cout << "\nTime " << j << ":";
         if (!pro.isEmpty()) { cpuFullTime++; }
         time++;
@@ -169,8 +172,12 @@ int main()
                 dqFront++;
             }
         }
-        for (int i = 0; i < 6350; i++)
+        for (int i = 0; i < 6350; i++) // error occurring somewhere in this code
         {     
+            if (j == 134)
+            {
+                std::cout << "testing";
+            }
             if (jobs[i].arrivalTime == j)
             {
                 if (jobs[i].type == 'A') { aArrived++; }

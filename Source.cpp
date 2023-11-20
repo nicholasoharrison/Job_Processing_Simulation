@@ -157,7 +157,10 @@ int main()
     {
         
 
-        
+        if (j == 417) 
+        { 
+            std::cout << "2"; //breakpoint for the error
+        }
         std::cout << "\nTime " << j << ":";
         logfile << "\nTime " << j << ":";
         if (!pro.isEmpty()) { cpuFullTime++; }
@@ -165,19 +168,31 @@ int main()
         if (pro.getOpenProcessor() > -1 && (waitQueue.size() != 0 || dQueue.size() != 0))
         {
             
+            if (j == 417)
+            {
+                std::cout << "2"; //breakpoint for the error
+            }
             if (dQueue.size() == 0)
             {
                 pro.processors[pro.getOpenProcessor()] = waitQueue[qFront];
                 std::cout << "\n   " << waitQueue[qFront]->type << ":" << waitQueue[qFront]->jobNumber << " processing... ";
                 logfile << "\n   " << waitQueue[qFront]->type << ":" << waitQueue[qFront]->jobNumber << " processing... ";
-                qFront++;
+                if (qFront == waitQueue.size())
+                {
+                    qFront++;
+                }
+                
             }
             else
             {
                 pro.processors[pro.getOpenProcessor()] = dQueue[dqFront];
                 std::cout << "\n   " << dQueue[dqFront]->type << ":" << dQueue[dqFront]->jobNumber << " processing... ";
                 logfile << "\n   " << dQueue[dqFront]->type << ":" << dQueue[dqFront]->jobNumber << " processing... ";
-                dqFront++;
+                if (dqFront == dQueue.size())
+                {
+                    dqFront++;
+                }
+                
             }
         }
         for (int i = 0; i < 6350; i++) // error occurring somewhere in this code

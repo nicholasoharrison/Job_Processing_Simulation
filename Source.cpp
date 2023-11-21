@@ -151,15 +151,15 @@ int main()
 
     
 
-    Processors pro(processorNum); // weird error with processorNum = 2, 4, 5
+    Processors pro(processorNum); 
 
-    for (int j = 0; j < 500; j++)
+    for (int j = 0; j < 500; j++) // 500 time units
     {
         
 
-        if (j == 417) 
+        if (j == 135) 
         { 
-            std::cout << "2"; //breakpoint for the error
+            std::cout << "4"; //breakpoint for the error
         }
         std::cout << "\nTime " << j << ":";
         logfile << "\nTime " << j << ":";
@@ -168,34 +168,29 @@ int main()
         if (pro.getOpenProcessor() > -1 && (waitQueue.size() != 0 || dQueue.size() != 0))
         {
             
-            if (j == 417)
+            if (j == 135)
             {
                 std::cout << "2"; //breakpoint for the error
             }
-            if (dQueue.size() == 0)
+            if (dQueue.size() - dqFront == 0)
             {
-                pro.processors[pro.getOpenProcessor()] = waitQueue[qFront];
-                std::cout << "\n   " << waitQueue[qFront]->type << ":" << waitQueue[qFront]->jobNumber << " processing... ";
-                logfile << "\n   " << waitQueue[qFront]->type << ":" << waitQueue[qFront]->jobNumber << " processing... ";
-                if (qFront == waitQueue.size())
+                if (waitQueue.size() > qFront)
                 {
+                    pro.processors[pro.getOpenProcessor()] = waitQueue[qFront];
+                    std::cout << "\n   " << waitQueue[qFront]->type << ":" << waitQueue[qFront]->jobNumber << " processing... ";
+                    logfile << "\n   " << waitQueue[qFront]->type << ":" << waitQueue[qFront]->jobNumber << " processing... ";
                     qFront++;
                 }
-                
             }
             else
             {
                 pro.processors[pro.getOpenProcessor()] = dQueue[dqFront];
                 std::cout << "\n   " << dQueue[dqFront]->type << ":" << dQueue[dqFront]->jobNumber << " processing... ";
                 logfile << "\n   " << dQueue[dqFront]->type << ":" << dQueue[dqFront]->jobNumber << " processing... ";
-                if (dqFront == dQueue.size())
-                {
-                    dqFront++;
-                }
-                
+                dqFront++;
             }
         }
-        for (int i = 0; i < 6350; i++) // error occurring somewhere in this code
+        for (int i = 0; i < 6350; i++)
         {     
             
             if (jobs[i].arrivalTime == j)
@@ -305,7 +300,7 @@ int main()
     std::cout << "\n\n\n\n\n";
 
 
-   
+   // Finishing the other 9,500 time units
 
     for (int j = 500; j < 9500; j++)
     {
@@ -316,12 +311,15 @@ int main()
         if (pro.getOpenProcessor() > -1 && (waitQueue.size() != 0 || dQueue.size() != 0))
         {
 
-            if (dQueue.size() == 0)
+            if (dQueue.size() - dqFront == 0)
             {
-                pro.processors[pro.getOpenProcessor()] = waitQueue[qFront];
-                std::cout << "\n   " << waitQueue[qFront]->type << ":" << waitQueue[qFront]->jobNumber << " processing... ";
-                logfile << "\n   " << waitQueue[qFront]->type << ":" << waitQueue[qFront]->jobNumber << " processing... ";
-                qFront++;
+                if (waitQueue.size() > qFront)
+                {
+                    pro.processors[pro.getOpenProcessor()] = waitQueue[qFront];
+                    std::cout << "\n   " << waitQueue[qFront]->type << ":" << waitQueue[qFront]->jobNumber << " processing... ";
+                    logfile << "\n   " << waitQueue[qFront]->type << ":" << waitQueue[qFront]->jobNumber << " processing... ";
+                    qFront++;
+                }
             }
             else
             {

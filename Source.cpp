@@ -12,7 +12,7 @@
 
 
 
-
+//Job sorting function
 void jobSort(std::vector<Job>& jobs)
 {
     int n = jobs.size();
@@ -33,6 +33,8 @@ void jobSort(std::vector<Job>& jobs)
 
 
 
+
+
 int main() 
 {
 
@@ -45,7 +47,7 @@ int main()
     static int arrivalTimeD = 0;
     int overallJobNumber = 1; 
 
-    // Type A jobs
+    // Generate type A jobs
     for (int i = 0; i < 2400; i++)
     {
         Job job;
@@ -57,7 +59,7 @@ int main()
         jobs.push_back(job);
     }
 
-    // Type B jobs
+    // Generate type B jobs
     for (int i = 0; i < 1650; i++) 
     {
         Job job;
@@ -69,7 +71,7 @@ int main()
         jobs.push_back(job);
     }
 
-    // Type C jobs
+    // Generate type C jobs
     for (int i = 0; i < 1100; i++)
     {
         Job job;
@@ -81,7 +83,7 @@ int main()
         jobs.push_back(job);
     }
 
-    // Type D jobs
+    // Generate type D jobs
     for (int i = 0; i < 1200; i++) {
         Job job;
         job.type = 'D';
@@ -93,8 +95,19 @@ int main()
     }
 
 
+
+
+
+
+
     // Sort jobs
     jobSort(jobs);
+
+
+
+
+
+
 
 
 
@@ -114,11 +127,16 @@ int main()
         std::cout << "Unable to open file\n";
     }
 
+
+
+
+
+
+
+
     std::vector<Job*> waitQueue;
     std::vector<Job*> dQueue;
     std::vector<Job> * temp = &jobs;
-
-
 
     int processorNum;
     std::cout << "\nEnter a number of processors: ";
@@ -146,35 +164,40 @@ int main()
 
 
 
+
+
+
+
     std::ofstream logfile("job_log_file.txt");
     logfile.clear();
 
     
 
+
+
+
+
     Processors pro(processorNum); 
 
-    for (int j = 0; j < 500; j++) // 500 time units
-    {
-        
 
-        if (j == 135) 
-        { 
-            std::cout << "4"; //breakpoint for the error
-        }
+
+
+
+
+    // Simulate 500 time units
+    for (int j = 0; j < 500; j++) 
+    {
+       
         std::cout << "\nTime " << j << ":";
         logfile << "\nTime " << j << ":";
         if (!pro.isEmpty()) { cpuFullTime++; }
         time++;
-        if (pro.getOpenProcessor() > -1 && (waitQueue.size() != 0 || dQueue.size() != 0))
+        if (pro.getOpenProcessor() > -1 && (waitQueue.size() != 0 || dQueue.size() != 0)) // Checks if there is an open processor and jobs waiting in queue
         {
             
-            if (j == 135)
+            if (dQueue.size() - dqFront == 0) // if there are no jobs in priority "D" queue
             {
-                std::cout << "2"; //breakpoint for the error
-            }
-            if (dQueue.size() - dqFront == 0)
-            {
-                if (waitQueue.size() > qFront)
+                if (waitQueue.size() > qFront) // makes sure index is in bounds
                 {
                     pro.processors[pro.getOpenProcessor()] = waitQueue[qFront];
                     std::cout << "\n   " << waitQueue[qFront]->type << ":" << waitQueue[qFront]->jobNumber << " processing... ";
@@ -182,7 +205,7 @@ int main()
                     qFront++;
                 }
             }
-            else
+            else // gets job from "D" queue
             {
                 pro.processors[pro.getOpenProcessor()] = dQueue[dqFront];
                 std::cout << "\n   " << dQueue[dqFront]->type << ":" << dQueue[dqFront]->jobNumber << " processing... ";
@@ -193,14 +216,14 @@ int main()
         for (int i = 0; i < 6350; i++)
         {     
             
-            if (jobs[i].arrivalTime == j)
+            if (jobs[i].arrivalTime == j) // checks if any value in the job list have an arrivial time of j
             {
                 if (jobs[i].type == 'A') { aArrived++; }
                 if (jobs[i].type == 'B') { bArrived++; }
                 if (jobs[i].type == 'C') { cArrived++; }
                 if (jobs[i].type == 'D') { dArrived++; }
                 
-                if (pro.getOpenProcessor() > -1 && waitQueue.size() == 0 && dQueue.size() == 0)
+                if (pro.getOpenProcessor() > -1 && waitQueue.size() == 0 && dQueue.size() == 0) // if there is nothing in the wait queue, then process job
                 {
                     pro.processors[pro.getOpenProcessor()] = &jobs[i];
                     std::cout << "\n   " << jobs[i].type << ":" << jobs[i].jobNumber << " processing... ";
@@ -209,24 +232,24 @@ int main()
                 else
                 {
                     
-                    if (jobs[i].type == 'D' && pro.allTypeD() != true)
+                    if (jobs[i].type == 'D' && pro.allTypeD() != true) // if arriving job type is D and the processor is not full of D jobs
                     {
-                        waitQueue.push_back(pro.processors[pro.getLeastTimeProcessor()]);
+                        waitQueue.push_back(pro.processors[pro.getLeastTimeProcessor()]); // D-type job will replace non D-type job due to priority
                         std::cout << "\n   "  << pro.processors[pro.getLeastTimeProcessor()]->type << ":" << pro.processors[pro.getLeastTimeProcessor()]->jobNumber << " placed in queue...";
                         logfile << "\n   " << pro.processors[pro.getLeastTimeProcessor()]->type << ":" << pro.processors[pro.getLeastTimeProcessor()]->jobNumber << " placed in queue...";
                         pro.processors[pro.getLeastTimeProcessor()] = &jobs[i];
                         std::cout << "\n   " << jobs[i].type << ":" << jobs[i].jobNumber << " processing... ";
                         logfile << "\n   " << jobs[i].type << ":" << jobs[i].jobNumber << " processing... ";
                     }
-                    else
+                    else // if processor IS full of D jobs OR not type D
                     {
-                        if(jobs[i].type == 'D')
+                        if(jobs[i].type == 'D')  
                         {
-                            dQueue.push_back(&jobs[i]);
+                            dQueue.push_back(&jobs[i]); // add D job to D queue since the processors are full of D jobs
                         }
                         else
                         {
-                            waitQueue.push_back(&jobs[i]);
+                            waitQueue.push_back(&jobs[i]); // add non D-type job to regular queue since processors are full
                         }
                         
                         std::cout << "\n   " << jobs[i].type << ":" << jobs[i].jobNumber << " placed in queue...";
@@ -238,7 +261,7 @@ int main()
             }
         }
 
-        for (int i = 0; i < processorNum; i++)
+        for (int i = 0; i < processorNum; i++)  // Calculates if processors are empty and tracks which job is completed
         {
             
             if (pro.processors[i]->jobNumber > -1) 
@@ -284,7 +307,7 @@ int main()
     std::cout << "\nAverage queue size: " << avgQueueSize;
     std::cout << "\nMax queue size: " << waitQueue.size() + dQueue.size();
     std::cout << "\nTotal time jobs are in queue: " << qFullTime;
-    std::cout << "\nAverage time jobs are in queue: "; // not sure how to implement this yet
+   
     std::cout << "\nTotal number of A jobs arrived: " << aArrived;
     std::cout << "\nTotal number of A jobs completed: " << aCompleted;
     std::cout << "\nTotal number of B jobs arrived: " << bArrived;
@@ -300,20 +323,25 @@ int main()
     std::cout << "\n\n\n\n\n";
 
 
-   // Finishing the other 9,500 time units
 
+
+
+
+
+
+   // Simulating the other 9,500 time units
     for (int j = 500; j < 9500; j++)
     {
         std::cout << "\nTime " << j << ":";
         logfile << "\nTime " << j << ":";
         if (!pro.isEmpty()) { cpuFullTime++; }
         time++;
-        if (pro.getOpenProcessor() > -1 && (waitQueue.size() != 0 || dQueue.size() != 0))
+        if (pro.getOpenProcessor() > -1 && (waitQueue.size() != 0 || dQueue.size() != 0)) // Checks if there is an open processor and jobs waiting in queue
         {
 
-            if (dQueue.size() - dqFront == 0)
+            if (dQueue.size() - dqFront == 0) // if there are no jobs in priority "D" queue
             {
-                if (waitQueue.size() > qFront)
+                if (waitQueue.size() > qFront) // makes sure index is in bounds
                 {
                     pro.processors[pro.getOpenProcessor()] = waitQueue[qFront];
                     std::cout << "\n   " << waitQueue[qFront]->type << ":" << waitQueue[qFront]->jobNumber << " processing... ";
@@ -321,7 +349,7 @@ int main()
                     qFront++;
                 }
             }
-            else
+            else  // gets job from "D" queue
             {
                 pro.processors[pro.getOpenProcessor()] = dQueue[dqFront];
                 std::cout << "\n   " << dQueue[dqFront]->type << ":" << dQueue[dqFront]->jobNumber << " processing... ";
@@ -331,14 +359,14 @@ int main()
         }
         for (int i = 0; i < 6350; i++)
         {
-            if (jobs[i].arrivalTime == j)
+            if (jobs[i].arrivalTime == j) // checks if any value in the job list have an arrivial time of j
             {
                 if (jobs[i].type == 'A') { aArrived++; }
                 if (jobs[i].type == 'B') { bArrived++; }
                 if (jobs[i].type == 'C') { cArrived++; }
                 if (jobs[i].type == 'D') { dArrived++; }
 
-                if (pro.getOpenProcessor() > -1 && waitQueue.size() == 0 && dQueue.size() == 0)
+                if (pro.getOpenProcessor() > -1 && waitQueue.size() == 0 && dQueue.size() == 0) // if there is nothing in the wait queue, then process job
                 {
                     pro.processors[pro.getOpenProcessor()] = &jobs[i];
                     std::cout << "\n   " << jobs[i].type << ":" << jobs[i].jobNumber << " processing... ";
@@ -347,24 +375,24 @@ int main()
                 else
                 {
 
-                    if (jobs[i].type == 'D' && pro.allTypeD() != true)
+                    if (jobs[i].type == 'D' && pro.allTypeD() != true) // if arriving job type is D and the processor is not full of D jobs
                     {
-                        waitQueue.push_back(pro.processors[pro.getLeastTimeProcessor()]);
+                        waitQueue.push_back(pro.processors[pro.getLeastTimeProcessor()]); // D-type job will replace non D-type job due to priority
                         std::cout << "\n   " << pro.processors[pro.getLeastTimeProcessor()]->type << ":" << pro.processors[pro.getLeastTimeProcessor()]->jobNumber << " placed in queue...";
                         logfile << "\n   " << pro.processors[pro.getLeastTimeProcessor()]->type << ":" << pro.processors[pro.getLeastTimeProcessor()]->jobNumber << " placed in queue...";
                         pro.processors[pro.getLeastTimeProcessor()] = &jobs[i];
                         std::cout << "\n   " << jobs[i].type << ":" << jobs[i].jobNumber << " processing... ";
                         logfile << "\n   " << jobs[i].type << ":" << jobs[i].jobNumber << " processing... ";
                     }
-                    else
+                    else // if processor IS full of D jobs or not type D
                     {
-                        if (jobs[i].type == 'D')
+                        if (jobs[i].type == 'D') 
                         {
-                            dQueue.push_back(&jobs[i]);
+                            dQueue.push_back(&jobs[i]); // add D job to D queue since the processors are full of D jobs
                         }
                         else
                         {
-                            waitQueue.push_back(&jobs[i]);
+                            waitQueue.push_back(&jobs[i]); // add non D-type job to regular queue since processors are full
                         }
 
                         std::cout << "\n   " << jobs[i].type << ":" << jobs[i].jobNumber << " placed in queue...";
@@ -376,7 +404,7 @@ int main()
             }
         }
 
-        for (int i = 0; i < processorNum; i++)
+        for (int i = 0; i < processorNum; i++)  // Calculates if processors are empty and tracks which job is completed
         {
 
             if (pro.processors[i]->jobNumber > -1)
@@ -414,6 +442,9 @@ int main()
 
     }
 
+
+
+
     avgQueueSize /= 9500.00;
 
 
@@ -422,7 +453,7 @@ int main()
     std::cout << "\nAverage queue size: " << avgQueueSize;
     std::cout << "\nMax queue size: " << waitQueue.size() + dQueue.size();
     std::cout << "\nTotal time jobs are in queue: " << qFullTime;
-    std::cout << "\nAverage time jobs are in queue: "; // not sure how to implement this yet
+   
     std::cout << "\nTotal number of A jobs arrived: " << aArrived;
     std::cout << "\nTotal number of A jobs completed: " << aCompleted;
     std::cout << "\nTotal number of B jobs arrived: " << bArrived;
@@ -439,6 +470,10 @@ int main()
 
 
     logfile.close();
+
+
+
+
 
 
     return 0;
